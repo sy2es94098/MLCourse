@@ -33,6 +33,7 @@ def ml_loop():
     location = 0
     platSpeed = 5
     ballSpeed = 7
+    ballSpeedY = 7
     count = 0
     # 2. Inform the game process that ml process is ready before start the loop.
     comm.ml_ready()
@@ -67,22 +68,24 @@ def ml_loop():
             for x, y in scene_info.bricks:
                 if y > max:
                     max = y
-            print(max)
+            max=80
         else:
 
             if ballx - xRec > 0:
                 dirX = 1
             else:
                 dirX = -1
+            ballSpeed = abs(ballx - xRec)
             xRec = ballx
             if bally - yRec > 0:
                 dirY = 1
             else:
                 dirY = -1
             yRec = bally
+            
             # print(dirY)
-            if (bally < max+ballSpeed*4 and bally > max+ballSpeed*2) and dirY == 1:
-                fps = (platy-bally)/ballSpeed
+            if  max+ballSpeedY*2 and dirY == 1:
+                fps = (platy-bally)/ballSpeedY
                 tmpdirX = dirX
                 tmpBall = ballx
 
@@ -102,21 +105,8 @@ def ml_loop():
                         continue
                 location = tmpBall
 
-                if platx+20 < ballx:
-                    comm.send_instruction(
-                        scene_info.frame, PlatformAction.MOVE_RIGHT)
-                elif platx+20 > ballx:
-                    comm.send_instruction(
-                        scene_info.frame, PlatformAction.MOVE_LEFT)
-                else:
-                    comm.send_instruction(
-                        scene_info.frame, PlatformAction.NONE)
-                # print(fps)
-            elif bally > max+ballSpeed*2 and dirY == 1:
-                # print(count)
-                # print(scene_info.ball)
-                # print(location)
-                count = count+1
+                
+         
                 if platx+20 < location + platSpeed/2 and platx+20 > location - platSpeed/2:
                     comm.send_instruction(
                         scene_info.frame, PlatformAction.NONE)
@@ -128,6 +118,20 @@ def ml_loop():
                         scene_info.frame, PlatformAction.MOVE_LEFT)
 
             else:
+                if platx+20 < (left+right)/2 + platSpeed/1.5 and platx+20 > (left+right)/2 - platSpeed/1.5:
+                    comm.send_instruction(
+                        scene_info.frame, PlatformAction.NONE)
+                elif platx+20 < (left+right)/2:
+                    comm.send_instruction(
+                        scene_info.frame, PlatformAction.MOVE_RIGHT)
+                elif platx+20 > (left+right)/2:
+                    comm.send_instruction(
+                        scene_info.frame, PlatformAction.MOVE_LEFT)
+  
+'''              else:
+                    comm.send_instruction(
+                        scene_info.frame, PlatformAction.NONE)
+
                 if platx+20 < ballx:
                     comm.send_instruction(
                         scene_info.frame, PlatformAction.MOVE_RIGHT)
@@ -137,3 +141,4 @@ def ml_loop():
                 else:
                     comm.send_instruction(
                         scene_info.frame, PlatformAction.NONE)
+'''
