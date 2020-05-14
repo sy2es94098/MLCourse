@@ -113,20 +113,16 @@ def ml_loop(side: str):
         # 3.3 Put the code here to handle the scene information
 
         # 3.4 Send the instruction for this frame to the game process
-        if not ball_served:
-            comm.send_to_game({"frame": scene_info["frame"], "command": "SERVE_TO_LEFT"})
-            ball_served = True
-            count = 0
+
+
+        if side == "1P":
+            command = ml_loop_for_1P()
         else:
+            command = ml_loop_for_2P()
 
-            if side == "1P":
-                command = ml_loop_for_1P()
-            else:
-                command = ml_loop_for_2P()
-
-            if command == 0:
-                comm.send_to_game({"frame": scene_info["frame"], "command": "NONE"})
-            elif command == 1:
-                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_RIGHT"})
-            else :
-                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_LEFT"})
+        if command == 0:
+            comm.send_to_game({"frame": scene_info["frame"], "command": "NONE"})
+        elif command == 1:
+            comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_RIGHT"})
+        else :
+            comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_LEFT"})
